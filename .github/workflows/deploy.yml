@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Set up SSH signing key
         run: |
@@ -68,6 +66,9 @@ jobs:
         with:
           node-version: 24
           cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
