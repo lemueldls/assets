@@ -48,18 +48,22 @@ jobs:
           git commit -S -m "chore: update flake" || echo "No changes to commit"
           git push
 
-      - run: nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)'
-      - run: nix build --print-out-paths
+      - name: Build flake
+        run: |
+          nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)'
+          nix build --print-out-paths
 
-      - run: mkdir -p public
-      - run: cp -r result/share/fonts public
+      - name: Copy assets
+        run: |
+          mkdir -p public
+          cp -r result/share/fonts public
 
-      - name: 📥 Install pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: 📥 Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
