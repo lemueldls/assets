@@ -20,12 +20,13 @@
         inherit system overlays;
         config.allowUnfree = allowUnfree;
       };
-      fonts = pkgs.callPackage ./fonts { inherit inputs; };
+      assets = pkgs.callPackage ./modules { inherit inputs; };
     in
     {
-      packages.${system}.default = pkgs.buildEnv {
-        name = "assets";
-        paths = fonts.packages ++ [ ];
-      };
+      packages.${system}.default = assets.iosevka.book;
+      # packages.${system}.default = pkgs.buildEnv {
+      #   name = "assets";
+      #   paths = modules.packages ++ [ ];
+      # };
     };
 }
