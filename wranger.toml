@@ -1,8 +1,0 @@
-name = "assets"
-compatibility_date = "2025-12-30"
-
-[assets]
-directory = "./public"
-
-[observability]
-enabled = true
