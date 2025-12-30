@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up SSH signing key
         run: |
@@ -56,18 +58,19 @@ jobs:
           mkdir -p public
           cp -r result/share/fonts public
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: "npm"
-
-      - name: Install dependencies
-        run: pnpm install
+          cache: "pnpm"
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --name=assets --assets=public
