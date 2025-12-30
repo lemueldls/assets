@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Set up SSH signing key
         run: |
@@ -64,9 +62,12 @@ jobs:
           node-version: 24
           cache: "npm"
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --name=assets --compatibility-date=2025-12-30 --assets=public
+          command: deploy --name=assets --assets=public
