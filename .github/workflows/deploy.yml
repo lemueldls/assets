@@ -30,15 +30,6 @@ jobs:
           git config --global user.name "Lemuel DLS"
           git config --global user.email "26912197+lemueldls@users.noreply.github.com"
 
-      - name: Update flake
-        run: nix flake update
-
-      - name: Add and commit changes
-        run: |
-          git add -A
-          git commit -S -m "chore: update flake" || echo "No changes to commit"
-          git push
-
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,6 +38,15 @@ jobs:
         with:
           name: lemueldls
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Update flake
+        run: nix flake update
+
+      - name: Add and commit changes
+        run: |
+          git add -A
+          git commit -S -m "chore: update flake" || echo "No changes to commit"
+          git push
 
       - run: nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)'
       - run: nix build --print-out-paths
