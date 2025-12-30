@@ -4,6 +4,11 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
 
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     iosevka-upstream = {
       url = "github:be5invis/Iosevka";
       flake = false;
@@ -12,21 +17,25 @@
 
   outputs =
     inputs:
-    let
-      system = "x86_64-linux";
-      overlays = [ ];
-      allowUnfree = true;
-      pkgs = import inputs.nixpkgs {
-        inherit system overlays;
-        config.allowUnfree = allowUnfree;
-      };
-      assets = pkgs.callPackage ./modules { inherit inputs; };
-    in
-    {
-      packages.${system}.default = assets.iosevka.book;
-      # packages.${system}.default = pkgs.buildEnv {
-      #   name = "assets";
-      #   paths = modules.packages ++ [ ];
-      # };
-    };
+    inputs.flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import inputs.nixpkgs { inherit system; };
+        modules = pkgs.callPackage ./modules { inherit inputs; };
+      in
+      {
+        packages = {
+          default = pkgs.buildEnv {
+            name = "assets";
+            paths = with modules; [
+              iosevka-book
+              iosevka-code
+              iosevka-term
+            ];
+          };
+
+          inherit (modules) iosevka-book iosevka-code iosevka-term;
+        };
+      }
+    );
 }
