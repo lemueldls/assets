@@ -69,12 +69,11 @@ jobs:
       - name: Copy assets
         run: |
           mkdir -p public
-          cp -rL result/share/fonts public
+          cp -r result/share/fonts public
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: github-pages
           path: public
 
       - name: Deploy to GitHub Pages
