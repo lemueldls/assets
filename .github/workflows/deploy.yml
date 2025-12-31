@@ -30,6 +30,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
       - name: Set up SSH signing key
         run: |
           mkdir -p ~/.ssh
@@ -67,23 +70,6 @@ jobs:
         run: |
           mkdir -p public
           cp -r result/share/fonts public
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Deploy to Cloudflare
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
