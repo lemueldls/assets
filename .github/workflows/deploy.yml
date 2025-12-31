@@ -69,7 +69,7 @@ jobs:
       - name: Copy assets
         run: |
           mkdir -p public
-          cp -r result/share/fonts public
+          cp -a result/share/fonts public
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v6
