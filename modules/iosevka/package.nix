@@ -18,6 +18,7 @@
 
   ...
 }:
+
 let
   inherit (lib.strings) concatStringsSep match optionalString;
 
@@ -42,7 +43,6 @@ assert (privateBuildPlan != null) -> variant != null;
 assert (extraParameters != null) -> variant != null;
 
 buildNpmPackage {
-
   inherit pname version;
   inherit src;
 

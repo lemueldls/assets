@@ -159,6 +159,26 @@ in
     };
   };
 
+  slim = iosevka.override {
+    variant = "Slim";
+    features = "full";
+    privateBuildPlan = common // {
+      exportGlyphNames = false;
+      family = "Iosevka Slim";
+      noCvSs = true;
+      noLigation = true;
+      spacing = "quasi-proportional";
+
+      webfontFormats = [ "WOFF2" ];
+
+      widths.Normal = {
+        css = "normal";
+        menu = 5;
+        shape = 500;
+      };
+    };
+  };
+
   code = iosevka.override {
     variant = "Code";
     nerdfont = true;

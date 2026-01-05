@@ -10,6 +10,11 @@
       url = "github:be5invis/Iosevka";
       flake = false;
     };
+
+    rubify = {
+      url = "github:lemueldls/rubify";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -26,12 +31,20 @@
             name = "assets";
             paths = with modules; [
               iosevka-book
+              iosevka-slim
               iosevka-code
               iosevka-term
+              sarasa-gothic
             ];
           };
 
-          inherit (modules) iosevka-book iosevka-code iosevka-term;
+          inherit (modules)
+            iosevka-book
+            iosevka-slim
+            iosevka-code
+            iosevka-term
+            sarasa-gothic
+            ;
         };
       }
     );
