@@ -1,6 +1,7 @@
 { inputs, pkgs, ... }:
 let
   iosevka = pkgs.callPackage ./iosevka { inherit inputs; };
+  wallpapers = pkgs.callPackage ./wallpapers { inherit inputs; };
 in
 {
   iosevka-book = iosevka.book;
@@ -10,5 +11,5 @@ in
 
   sarasa-gothic = pkgs.callPackage ./sarasa-gothic.nix { inherit inputs; };
 
-  walls = pkgs.callPackage ./walls.nix { inherit inputs; };
+  wallpapers = wallpapers.default;
 }

@@ -17,7 +17,7 @@
     };
 
     wallpapers = {
-      url = ./wallpapers;
+      url = ./modules/wallpapers/images;
       flake = false;
     };
   };
@@ -40,7 +40,7 @@
               iosevka-code
               iosevka-term
               sarasa-gothic
-              walls
+              wallpapers
             ];
           };
 
@@ -50,7 +50,7 @@
             iosevka-code
             iosevka-term
             sarasa-gothic
-            walls
+            wallpapers
             ;
         };
       }
