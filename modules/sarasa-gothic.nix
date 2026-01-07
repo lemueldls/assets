@@ -1,17 +1,19 @@
 {
   inputs,
   lib,
-  pkgs,
-
   stdenv,
+
+  # Deps
+  callPackage,
+  sarasa-gothic,
 }:
 
 let
   rubify = inputs.rubify.packages.${stdenv.hostPlatform.system}.default;
-  iosevka = pkgs.callPackage ./iosevka { inherit inputs; };
+  iosevka = callPackage ./iosevka { inherit inputs; };
 in
 
-pkgs.sarasa-gothic.overrideAttrs (finalAttrs: {
+sarasa-gothic.overrideAttrs (finalAttrs: {
   installPhase = ''
     runHook preInstall
 

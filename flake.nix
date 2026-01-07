@@ -15,6 +15,11 @@
       url = "github:lemueldls/rubify";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    wallpapers = {
+      url = ./wallpapers;
+      flake = false;
+    };
   };
 
   outputs =
@@ -35,6 +40,7 @@
               iosevka-code
               iosevka-term
               sarasa-gothic
+              walls
             ];
           };
 
@@ -44,6 +50,7 @@
             iosevka-code
             iosevka-term
             sarasa-gothic
+            walls
             ;
         };
       }

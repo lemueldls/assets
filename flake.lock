@@ -88,7 +88,8 @@
         "flake-utils": "flake-utils",
         "iosevka-upstream": "iosevka-upstream",
         "nixpkgs": "nixpkgs",
-        "rubify": "rubify"
+        "rubify": "rubify",
+        "wallpapers": "wallpapers"
       }
     },
     "rubify": {
@@ -142,6 +143,18 @@
         "repo": "default",
         "type": "github"
       }
+    },
+    "wallpapers": {
+      "flake": false,
+      "locked": {
+        "path": "wallpapers",
+        "type": "path"
+      },
+      "original": {
+        "path": "wallpapers",
+        "type": "path"
+      },
+      "parent": []
     }
   },
   "root": "root",

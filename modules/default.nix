@@ -9,4 +9,6 @@ in
   iosevka-term = iosevka.term;
 
   sarasa-gothic = pkgs.callPackage ./sarasa-gothic.nix { inherit inputs; };
+
+  walls = pkgs.callPackage ./walls.nix { inherit inputs; };
 }
