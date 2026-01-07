@@ -8,7 +8,7 @@
 }:
 
 let
-  name = "walls";
+  name = "wallpapers";
   src = inputs.wallpapers;
 in
 
@@ -21,7 +21,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ${lib.getExe lutgen} apply -p catppuccin-mocha *.{png,jpg} -- "#00a896"
     ${lib.getExe lutgen} apply -p catppuccin-latte *.{png,jpg} -- "#00a896"
 
-    imgdir="${placeholder "out"}/share/wallpapers/lemueldls/contents/images"
+    imgdir="${placeholder "out"}/share/wallpapers/lemuel/contents/images"
     mkdir -p $imgdir
     cp -r * $imgdir
 
