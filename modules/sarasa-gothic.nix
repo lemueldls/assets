@@ -15,10 +15,8 @@ pkgs.sarasa-gothic.overrideAttrs (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/share/fonts/truetype
-    for ttc_file in *.ttc; do
-      ${lib.getExe rubify} $ttc_file --font ${iosevka.slim}/share/fonts/truetype/IosevkaSlim-Regular.ttf --subset -o $out/share/fonts/truetype
-    done
+    ${lib.getExe rubify} *.ttc --font ${iosevka.slim}/share/fonts/truetype/IosevkaSlim-Regular.ttf --subset -o dist
+    install -Dm644 -t $out/share/fonts/truetype dist/*.ttc
 
     runHook postInstall
   '';
