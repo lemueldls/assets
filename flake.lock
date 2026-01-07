@@ -147,11 +147,11 @@
     "wallpapers": {
       "flake": false,
       "locked": {
-        "path": "wallpapers",
+        "path": "modules/wallpapers/images",
         "type": "path"
       },
       "original": {
-        "path": "wallpapers",
+        "path": "modules/wallpapers/images",
         "type": "path"
       },
       "parent": []
