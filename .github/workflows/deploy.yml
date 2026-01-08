@@ -70,7 +70,7 @@ jobs:
         run: |
           mkdir -p public
           cp -r result/share/fonts public
-          cp -r result/share/wallpapers/lemuel/images public
+          cp -r result/share/wallpapers/lemuel/contents/images public/wallpapers
 
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v4
