@@ -80,3 +80,13 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Generate routes
+        run: |
+          find public/* | jq -R . | jq -s '{ routes: . }' > routes.json
+
+      - name: Upload Routes Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: routes
+          path: routes.json
