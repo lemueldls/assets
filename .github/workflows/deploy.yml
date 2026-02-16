@@ -72,6 +72,11 @@ jobs:
           cp -r result/share/fonts public
           cp -r result/share/wallpapers/lemuel/contents/images public/wallpapers
 
+      - name: Generate index
+        run: |
+          cd public
+          find ** | jq -R . | jq -s . > index.json
+
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v4
         with:
@@ -80,14 +85,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Generate routes
-        run: |
-          find public/* | jq -R . | jq -s '{ routes: . }' > routes.json
-
-      - name: Upload Routes Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: routes
-          path: routes.json
-          retention-days: 1
