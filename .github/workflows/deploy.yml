@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -90,3 +90,4 @@ jobs:
         with:
           name: routes
           path: routes.json
+          retention-days: 1
