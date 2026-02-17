@@ -77,6 +77,15 @@ jobs:
           cd public
           find -L * -type f | jq -R . | jq -s . > index.json
 
+      - name: Upload to R2
+        uses: zhaijunxiao/r2-dir-sync@v1
+        with:
+          accountid: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          accesskeyid: ${{ secrets.CLOUDFLARE_ACCESS_KEY }}
+          secretaccesskey: ${{ secrets.CLOUDFLARE_SECRET_KEY }}
+          bucket: assets
+          source: public
+
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v4
         with:
