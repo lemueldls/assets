@@ -85,12 +85,3 @@ jobs:
           secretaccesskey: ${{ secrets.CLOUDFLARE_SECRET_KEY }}
           bucket: assets
           source: public
-
-      - name: Upload artifacts
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: public
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
