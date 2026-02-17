@@ -75,7 +75,7 @@ jobs:
       - name: Generate index
         run: |
           cd public
-          find **.* | jq -R . | jq -s . > index.json
+          find -L . -type f | jq -R . | jq -s . > index.json
 
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v4
