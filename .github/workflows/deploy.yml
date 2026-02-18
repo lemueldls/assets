@@ -61,7 +61,7 @@ jobs:
       - name: Build flake
         run: |
           nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)'
-          nix build --no-link --print-out-paths
+          nix build --print-out-paths
 
       - name: Copy assets
         run: |
