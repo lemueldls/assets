@@ -7,13 +7,13 @@ engine: nixery
 dependencies:
   nixpkgs:
     - cachix
-
-environment:
-  USER: lemuel
+    - jq
 
 steps:
   - name: Use cache
     command: cachix use lemueldls
+    environment:
+      USER: root
 
   - name: Build flake
     command: |
