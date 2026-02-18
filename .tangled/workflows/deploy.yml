@@ -1,0 +1,18 @@
+when:
+  - event: [push, manual]
+    branch: [main]
+
+engine: nixery
+
+dependencies:
+  nixpkgs:
+    - cachix
+
+steps:
+  - name: Use cache
+    command: cachix use lemueldls
+
+  - name: Build flake
+    command: |
+      nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)' | cachix push lemueldls
+      nix build --no-link --print-out-paths | cachix push lemueldls

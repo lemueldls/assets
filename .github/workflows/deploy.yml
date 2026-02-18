@@ -28,10 +28,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+          fetch-depth: 1
 
       - name: Set up SSH signing key
         run: |
@@ -64,7 +61,7 @@ jobs:
       - name: Build flake
         run: |
           nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)'
-          nix build --print-out-paths
+          nix build --no-link --print-out-paths
 
       - name: Copy assets
         run: |
