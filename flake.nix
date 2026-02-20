@@ -2,7 +2,7 @@
   description = "Public assets";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-25.11";
 
     flake-utils.url = "github:numtide/flake-utils";
 
@@ -31,7 +31,7 @@
         modules = pkgs.callPackage ./modules { inherit inputs; };
       in
       {
-        packages = {
+        packages = modules // {
           default = pkgs.buildEnv {
             name = "assets";
             paths = with modules; [
@@ -43,15 +43,6 @@
               wallpapers
             ];
           };
-
-          inherit (modules)
-            iosevka-book
-            iosevka-slim
-            iosevka-code
-            iosevka-term
-            sarasa-gothic
-            wallpapers
-            ;
         };
       }
     );
