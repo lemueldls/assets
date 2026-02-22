@@ -100,11 +100,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771741507,
-        "narHash": "sha256-c/2wrBMkoNpcD2agZBxWbSIiqVgnZUgAxWOXVOsd+tI=",
+        "lastModified": 1771793742,
+        "narHash": "sha256-vo4A1P5bB0JqZtx7dMTeoY8JyCR2S1AnwlR7UvThl2w=",
         "owner": "lemueldls",
         "repo": "rubify",
-        "rev": "5670a0a369250ef0ca742278a33a64b8dbd9564f",
+        "rev": "cd629cb211c96fd5dbbf23d4f3d7d3bf373d173c",
         "type": "github"
       },
       "original": {
