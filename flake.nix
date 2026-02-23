@@ -35,11 +35,13 @@
           default = pkgs.buildEnv {
             name = "assets";
             paths = with modules; [
-              iosevka-book
-              iosevka-slim
-              iosevka-code
-              iosevka-term
-              sarasa-gothic
+              fonts.iosevka-book
+              fonts.iosevka-slim
+              fonts.iosevka-code
+              fonts.iosevka-term
+              fonts.sarasa-gothic
+              fonts.besley
+
               wallpapers
             ];
           };

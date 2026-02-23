@@ -18,4 +18,4 @@ steps:
   - name: Build flake
     command: |
       nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)' | cachix push lemueldls
-      nix build --print-out-paths .#iosevka-book .#iosevka-slim .#iosevka-code .#iosevka-term .#sarasa-gothic .#wallpapers | cachix push lemueldls
+      nix build --print-out-paths | cachix push lemueldls
