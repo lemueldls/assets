@@ -17,9 +17,9 @@ sarasa-gothic.overrideAttrs (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    ${lib.getExe rubify} *.ttc -o phase1 --ruby pinyin --position top --font ${iosevka.slim}/share/fonts/truetype/IosevkaSlim-Regular.ttf
-    ${lib.getExe rubify} phase1/*.ttc -o phase2 --ruby romaji --position bottom --font ${iosevka.slim}/share/fonts/truetype/IosevkaSlim-Regular.ttf
-    install -Dm644 -t $out/share/fonts/truetype phase2/*.ttc
+    ${lib.getExe rubify} *.ttc -o . --font ${iosevka.slim}/share/fonts/truetype/IosevkaSlim-Regular.ttf --ruby pinyin --position top
+    ${lib.getExe rubify} *.ttc -o . --font ${iosevka.slim}/share/fonts/truetype/IosevkaSlim-Regular.ttf --ruby romaji --position bottom
+    install -Dm644 -t $out/share/fonts/truetype *.ttc
 
     runHook postInstall
   '';
