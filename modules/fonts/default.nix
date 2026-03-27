@@ -10,5 +10,5 @@ in
 
   sarasa-gothic = pkgs.callPackage ./sarasa-gothic.nix { inherit inputs; };
 
-  besley = pkgs.besley;
+  monaspace = pkgs.nerd-fonts.monaspace;
 }
