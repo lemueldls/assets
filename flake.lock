@@ -54,11 +54,11 @@
     "iosevka-upstream": {
       "flake": false,
       "locked": {
-        "lastModified": 1772385273,
-        "narHash": "sha256-yj46lNYOzaopu5Mo68jwh+xf/q/bjMmQdprh6e56eeY=",
+        "lastModified": 1774705911,
+        "narHash": "sha256-Se+GIx+Uea/lMOdTDhbt/H+F0yeyMHclpSp52U+pmtA=",
         "owner": "be5invis",
         "repo": "Iosevka",
-        "rev": "a0da04f6e2dadee78d672d27fc370111e15cb483",
+        "rev": "49312e9338d63caba2a9b2c6a71ece2da2f73981",
         "type": "github"
       },
       "original": {
