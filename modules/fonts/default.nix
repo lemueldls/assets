@@ -9,6 +9,4 @@ in
   iosevka-term = iosevka.term;
 
   sarasa-gothic = pkgs.callPackage ./sarasa-gothic.nix { inherit inputs; };
-
-  monaspace = pkgs.nerd-fonts.monaspace;
 }

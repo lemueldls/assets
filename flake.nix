@@ -40,7 +40,6 @@
               fonts.iosevka-code
               fonts.iosevka-term
               fonts.sarasa-gothic
-              fonts.monaspace
 
               wallpapers
             ];
