@@ -67,7 +67,7 @@ jobs:
         run: |
           mkdir -p public
           cp -r result/share/fonts public
-          cp -r result/share/wallpapers/lemuel/contents/images public/wallpapers
+          cp -r result/share/wallpapers/assets/contents/images public/wallpapers
 
       - name: Generate index
         run: |
