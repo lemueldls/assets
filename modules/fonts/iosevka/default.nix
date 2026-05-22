@@ -115,11 +115,31 @@ let
         menu = 400;
         shape = 400;
       };
+      # Medium = {
+      #   css = 500;
+      #   menu = 500;
+      #   shape = 500;
+      # };
+      SemiBold = {
+        css = 600;
+        menu = 600;
+        shape = 600;
+      };
       Bold = {
         css = 700;
         menu = 700;
         shape = 700;
       };
+      # ExtraBold = {
+      #   css = 800;
+      #   menu = 800;
+      #   shape = 800;
+      # };
+      # Black = {
+      #   css = 900;
+      #   menu = 900;
+      #   shape = 900;
+      # };
     };
 
     widths.Normal = {
