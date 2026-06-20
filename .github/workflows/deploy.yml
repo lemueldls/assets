@@ -65,6 +65,21 @@ jobs:
           cp -r result/share/fonts public
           cp -r result/share/wallpapers/assets/contents/images public/wallpapers
 
+      - name: Install compression utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y oxipng jpegoptim
+
+      - name: Compress images
+        run: |
+          echo "Optimizing PNG files..."
+          # -o 4: High optimization, -i 0: Remove interlacing, --strip safe: Keep critical chunks only
+          find public/wallpapers -type f -name "*.png" -exec oxipng -o 4 -i 0 --strip safe {} +
+
+          echo "Optimizing JPEG files..."
+          # --strip-all: Removes EXIF/metadata, -m100: Retains 100% original visual quality (lossless)
+          find public/wallpapers -type f -name "*.jpg" -o -name "*.jpeg" -exec jpegoptim --strip-all -m100 {} +
+
       - name: Generate index
         run: |
           cd public
