@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
@@ -80,6 +80,11 @@ jobs:
       - name: Install oxipng
         if: steps.cache-oxipng.outputs.cache-hit != 'true'
         run: cargo install oxipng
+
+      - name: Fix folder permissions
+        run: |
+          find public/wallpapers -type d -exec chmod 755 {} +
+          find public/wallpapers -type f -exec chmod 644 {} +
 
       - name: Compress images
         run: |
