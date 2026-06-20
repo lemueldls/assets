@@ -65,10 +65,21 @@ jobs:
           cp -r result/share/fonts public
           cp -r result/share/wallpapers/assets/contents/images public/wallpapers
 
-      - name: Install compression utilities
+      - name: Install jpegoptim
         run: |
           sudo apt-get update
-          sudo apt-get install -y oxipng jpegoptim
+          sudo apt-get install -y jpegoptim
+
+      - name: Cache oxipng
+        id: cache-oxipng
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/oxipng
+          key: ${{ runner.os }}-oxipng-v1
+
+      - name: Install oxipng
+        if: steps.cache-oxipng.outputs.cache-hit != 'true'
+        run: cargo install oxipng
 
       - name: Compress images
         run: |
