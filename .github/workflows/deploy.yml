@@ -70,9 +70,11 @@ jobs:
           cd public
           find -L * -type f | jq -R . | jq -s . > index.json
 
-      - name: Deploy to Cloudflare
-        uses: cloudflare/wrangler-action@v4
+      - name: Upload to R2
+        uses: zhaijunxiao/r2-dir-sync@v1.0.1
         with:
-          command: deploy --name assets --compatibility-date 2026-06-20 --assets public
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          accountid: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          accesskeyid: ${{ secrets.CLOUDFLARE_ACCESS_KEY }}
+          secretaccesskey: ${{ secrets.CLOUDFLARE_SECRET_KEY }}
+          bucket: assets
+          source: public
