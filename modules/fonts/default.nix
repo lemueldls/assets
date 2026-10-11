@@ -1,6 +1,7 @@
 { inputs, pkgs, ... }:
 let
   iosevka = pkgs.callPackage ./iosevka { inherit inputs; };
+  asterism = pkgs.callPackage ./asterism { inherit inputs; };
 in
 {
   iosevka-book = iosevka.book;
@@ -8,5 +9,10 @@ in
   iosevka-code = iosevka.code;
   iosevka-term = iosevka.term;
 
-  sarasa-gothic = pkgs.callPackage ./sarasa-gothic.nix { inherit inputs; };
+  asterism-text = asterism.text;
+  asterism-slim = asterism.slim;
+  asterism-code = asterism.code;
+  asterism-term = asterism.term;
+
+  asterism-ruby = pkgs.callPackage ./asterism/ruby.nix { inherit inputs; };
 }
