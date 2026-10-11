@@ -39,7 +39,12 @@
               fonts.iosevka-slim
               fonts.iosevka-code
               fonts.iosevka-term
-              fonts.sarasa-gothic
+
+              fonts.asterism-text
+              fonts.asterism-slim
+              fonts.asterism-code
+              fonts.asterism-term
+              fonts.asterism-ruby
 
               wallpapers
             ];

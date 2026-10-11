@@ -10,7 +10,7 @@
 
 let
   rubify = inputs.rubify.packages.${stdenv.hostPlatform.system}.default;
-  asterism = callPackage ./default { inherit inputs; };
+  asterism = callPackage ./default.nix { inherit inputs; };
 in
 
 sarasa-gothic.overrideAttrs (finalAttrs: {
