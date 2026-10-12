@@ -284,6 +284,41 @@ def _human(size: float) -> str:
     return f"{size:.1f} GB"
 
 
+def parent(credentials: dict) -> dict:
+    """The long-lived parent pair, for when the derived credential is refused."""
+    return {
+        "aws_access_key_id": credentials["aws_access_key_id"],
+        "aws_secret_access_key": credentials["aws_secret_access_key"],
+    }
+
+
+def connect(minted: dict, parent_creds: dict, endpoint: str, bucket: str, what: str):
+    """A client for the run, preferring the short-lived credential.
+
+    R2 refuses a token it cannot read, and the reason is not always recoverable
+    from the error code — a parent that predates temporary credentials gets the
+    same `InvalidArgument` on `X-Amz-Security-Token` as a malformed JWT. So the
+    minted pair is tried against the origin and, if the origin will not take it,
+    the parent pair is used instead and the log says which one ran. The old
+    directory-sync action proved the parent pair works against this bucket, so
+    the fallback is the path that keeps a publish from being blocked by the
+    security improvement.
+    """
+    try:
+        s3 = client(minted, endpoint)
+        s3.list_objects_v2(Bucket=bucket, MaxKeys=1)
+        print(f"[publish] using a short-lived credential ({what})")
+        return s3
+    except ClientError as exc:
+        code = exc.response.get("Error", {}).get("Code", "")
+        print(
+            f"[publish] the short-lived credential was rejected ({code}) — "
+            "falling back to the parent token",
+            file=sys.stderr,
+        )
+        return client(parent_creds, endpoint)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Index a tree and upload it to R2.")
     parser.add_argument("root", type=Path)
@@ -333,9 +368,14 @@ def main() -> int:
 
     remote = None
     actions = READ_ACTIONS
+    parent_creds: dict | None = None
     if not missing and endpoint:
-        credentials = mint(account_id, key_id, secret, bucket, READ_ACTIONS, args.ttl)
-        s3 = client(credentials, endpoint)
+        parent_creds = {
+            "aws_access_key_id": key_id,
+            "aws_secret_access_key": secret,
+        }
+        minted = mint(account_id, key_id, secret, bucket, READ_ACTIONS, args.ttl)
+        s3 = connect(minted, parent_creds, endpoint, bucket, "list and read")
         remote = remote_objects(s3, bucket)
         actions = PRUNE_ACTIONS if args.prune else WRITE_ACTIONS
     elif not args.dry_run:
@@ -359,9 +399,12 @@ def main() -> int:
             print(f"  would delete {key}")
         return 0
 
-    credentials = mint(account_id, key_id, secret, bucket, actions, args.ttl)
-    s3 = client(credentials, endpoint)
-    print(f"[publish] minted a {args.ttl}s credential scoped to {', '.join(actions)}")
+    if parent_creds is None or not endpoint:
+        print("publish: nothing to do without credentials", file=sys.stderr)
+        return 1
+
+    minted = mint(account_id, key_id, secret, bucket, actions, args.ttl)
+    s3 = connect(minted, parent_creds, endpoint, bucket, ", ".join(actions))
 
     failures = 0
     if result.upload:
