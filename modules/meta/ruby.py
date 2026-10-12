@@ -28,7 +28,7 @@ Two things the merge needs that are not obvious:
     a weight neither family ships would be a lie the manifest then records, so
     the overlap is what the catalogue gets, and the manifest says so.
 
-    python3 ruby.py --work <rubify output> --asterism <slim>/share/fonts/truetype \
+    python3 ruby.py --work <rubify output> --asterism <text>/share/fonts/truetype \
                     --out <pkg>/share/fonts --family "Asterism Ruby" --patch pinyin
 
 Rubify is asked to keep only the annotated characters (`--subset`), which for
@@ -125,7 +125,7 @@ def main() -> int:
         "--work", type=Path, required=True, help="rubify's output directory"
     )
     parser.add_argument(
-        "--asterism", type=Path, required=True, help="`<slim>/share/fonts/truetype`"
+        "--asterism", type=Path, required=True, help="`<text>/share/fonts/truetype`"
     )
     parser.add_argument("--out", type=Path, required=True, help="`<pkg>/share/fonts`")
     parser.add_argument("--family", default="Asterism Ruby")
@@ -143,9 +143,9 @@ def main() -> int:
         if weight is None:
             continue
         word = WEIGHT_WORDS[weight]
-        asterism = args.asterism / f"AsterismSlim-{word}.ttf"
+        asterism = args.asterism / f"AsterismText-{word}.ttf"
         if not asterism.exists():
-            print(f"[ruby] no Asterism Slim face at {weight} — skipping")
+            print(f"[ruby] no Asterism Text face at {weight} — skipping")
             continue
 
         plain = merge(asterism, subset, args.out, args.family, args.patch, weight)
