@@ -12,7 +12,6 @@ let
   rubify = inputs.rubify.packages.${stdenv.hostPlatform.system}.default;
 
   asterism = callPackage ./default.nix { inherit inputs; };
-  asterismFace = asterism.slim;
 
   python = python3Packages.python.withPackages (ps: [
     ps.fonttools
@@ -39,7 +38,7 @@ stdenv.mkDerivation (finalAttrs: {
     for ruby in pinyin romaji; do
       for ttc in ${sarasa-gothic}/share/fonts/truetype/Sarasa-*.ttc; do
         rubify "$ttc" -o "work/$ruby" \
-          --font ${asterismFace}/share/fonts/truetype/AsterismSlim-Regular.ttf \
+          --font ${asterism.slim}/share/fonts/truetype/AsterismSlim-Regular.ttf \
           --ruby "$ruby" \
           --position $([ "$ruby" = pinyin ] && echo top || echo bottom) \
           --split --subset --woff2
@@ -54,7 +53,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     for ruby in Pinyin Romaji; do
       python ${../../meta/ruby.py} --work "work/$(echo $ruby | tr 'A-Z' 'a-z')" \
-        --asterism ${asterismFace}/share/fonts/truetype \
+        --asterism ${asterism.text}/share/fonts/truetype \
         --out "$out/share/fonts" \
         --family "Asterism Ruby" \
         --patch "$ruby"
