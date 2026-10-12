@@ -62,7 +62,7 @@ jobs:
       - name: Assemble the upload tree
         run: |
           mkdir -p public
-          cp -rL result/public/. public/
+          cp -rL result/. public/
           chmod -R u+w public
 
       - name: Index and upload
