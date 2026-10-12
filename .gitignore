@@ -1,1 +1,4 @@
+public/
+*.pyc
+__pycache__/
 result

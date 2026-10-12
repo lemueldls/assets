@@ -34,21 +34,20 @@
         packages = modules // {
           default = pkgs.buildEnv {
             name = "assets";
-            paths = with modules; [
-              fonts.iosevka-book
-              fonts.iosevka-slim
-              fonts.iosevka-code
-              fonts.iosevka-term
-
-              fonts.asterism-text
-              fonts.asterism-slim
-              fonts.asterism-code
-              fonts.asterism-term
-              fonts.asterism-ruby
-
-              wallpapers
+            paths = [
+              modules.wallpapers
+              modules.fonts.asterism-text
+              modules.fonts.asterism-slim
+              modules.fonts.asterism-code
+              modules.fonts.asterism-term
+              modules.fonts.asterism-ruby
             ];
           };
+        };
+
+        apps.publish = {
+          type = "app";
+          program = "${modules.publish}/bin/publish";
         };
       }
     );

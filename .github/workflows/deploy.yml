@@ -32,7 +32,7 @@ jobs:
           echo "${{ secrets.SSH_SIGNING_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           git config --global gpg.format ssh
-          git config --global user.signingKey ~/.ssh/id_ed25519
+          git config --global gpg.signingkey ~/.ssh/id_ed25519
           git config --global user.name "Lemuel DLS"
           git config --global user.email "noreply@git.lemueldls.dev"
 
@@ -48,33 +48,27 @@ jobs:
       - name: Update flake
         run: nix flake update
 
-      - name: Build flake
+      - name: Build assets and metadata
         run: |
           nix flake archive --json | jq -r '.path,(.inputs|to_entries[].value.path)'
-          nix build --print-out-paths
+          nix build --print-out-paths .#public
 
       - name: Add and commit changes
         run: |
           git add -A
-          git commit -S -m "chore: update flake" || echo "No changes to commit"
+          git commit -S -m "chore: update flake [skip ci]" || echo "No changes to commit"
           git push
 
-      - name: Copy assets
+      - name: Assemble the upload tree
         run: |
           mkdir -p public
-          cp -r result/share/fonts public
-          cp -r result/share/wallpapers/assets/contents/images public/wallpapers
+          cp -rL result/public/. public/
+          chmod -R u+w public
 
-      - name: Generate index
-        run: |
-          cd public
-          find -L * -type f | jq -R . | jq -s . > index.json
-
-      - name: Upload to R2
-        uses: zhaijunxiao/r2-dir-sync@v1.0.1
-        with:
-          accountid: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          accesskeyid: ${{ secrets.CLOUDFLARE_ACCESS_KEY }}
-          secretaccesskey: ${{ secrets.CLOUDFLARE_SECRET_KEY }}
-          bucket: assets
-          source: public
+      - name: Index and upload
+        run: nix run .#publish -- public
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_ACCESS_KEY }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_SECRET_KEY }}
+          R2_BUCKET: assets
