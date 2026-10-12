@@ -70,11 +70,13 @@ def weight_of(path: Path) -> int | None:
     if not stem.startswith(f"{DESIGN}-"):
         return None
     style = stem[len(DESIGN) + 1 :]
-    if style.endswith("Italic"):
+    style = style.removesuffix("Italic")
     return STYLE_WEIGHTS.get(style)
 
 
-def merge(asterism: Path, subset: Path, out_dir: Path, family: str, patch: str, weight: int) -> None:
+def merge(
+    asterism: Path, subset: Path, out_dir: Path, family: str, patch: str, weight: int
+) -> None:
     """Merge the annotated subset into the Asterism face, and name it.
 
     Asterism goes first: the merger takes OS/2, panose and the name table from the
@@ -97,7 +99,9 @@ def merge(asterism: Path, subset: Path, out_dir: Path, family: str, patch: str, 
     }
 
     languages = [
-        (r.platformID, r.platEncID, r.langID) for r in merged["name"].names if r.nameID in values
+        (r.platformID, r.platEncID, r.langID)
+        for r in merged["name"].names
+        if r.nameID in values
     ]
 
     for name_id in (1, 2, 3, 4, 6, 16, 17):
@@ -117,11 +121,17 @@ def merge(asterism: Path, subset: Path, out_dir: Path, family: str, patch: str, 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--work", type=Path, required=True, help="rubify's output directory")
-    parser.add_argument("--asterism", type=Path, required=True, help="`<slim>/share/fonts/truetype`")
+    parser.add_argument(
+        "--work", type=Path, required=True, help="rubify's output directory"
+    )
+    parser.add_argument(
+        "--asterism", type=Path, required=True, help="`<slim>/share/fonts/truetype`"
+    )
     parser.add_argument("--out", type=Path, required=True, help="`<pkg>/share/fonts`")
     parser.add_argument("--family", default="Asterism Ruby")
-    parser.add_argument("--patch", required=True, help="annotation set, in the file name")
+    parser.add_argument(
+        "--patch", required=True, help="annotation set, in the file name"
+    )
     args = parser.parse_args()
 
     for tree in ("truetype", "woff2"):
