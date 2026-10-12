@@ -37,6 +37,8 @@ let
           ${wallpapers}/share/wallpapers/assets/contents/images
       '';
 
+  fontArchives = pkgs.callPackage ./fonts/zip.nix { inherit inputs; };
+
   publish = pkgs.writers.writePython3Bin "publish" {
     libraries = [ pkgs.python3Packages.boto3 ];
     flakeIgnore = [ "E501" ];
@@ -60,6 +62,7 @@ let
 
     cp ${metaFonts} $out/fonts.meta.json
     cp ${metaWalls} $out/walls.meta.json
+    cp ${fontArchives}/*.zip $out/fonts/
   '';
 in
 {
@@ -68,6 +71,7 @@ in
     wallpapers
     metaFonts
     metaWalls
+    fontArchives
     publish
     public
     ;
