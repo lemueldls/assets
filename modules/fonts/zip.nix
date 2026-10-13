@@ -8,7 +8,12 @@ let
 
   ruby = pkgs.callPackage ./asterism/ruby.nix { inherit inputs; };
 
-  archives = [
+  python = pkgs.python3.withPackages (ps: [
+    ps.fonttools
+    ps.brotli
+  ]);
+
+  cuts = [
     {
       name = "asterism-text";
       pkg = asterism.text;
@@ -40,29 +45,14 @@ let
       glob = "AsterismRubyRomaji-*.ttf";
     }
   ];
+
+  cutsFile = pkgs.writeText "font-cut-list.json" (builtins.toJSON cuts);
 in
 
 pkgs.runCommand "font-archives"
   {
-    nativeBuildInputs = [ pkgs.zip ];
+    nativeBuildInputs = [ python ];
   }
   ''
-    mkdir -p $out work
-
-    ${pkgs.lib.concatStringsSep "\n" (
-      map (
-        {
-          name,
-          pkg,
-          glob,
-        }:
-        ''
-            mkdir -p work/${name}
-            cp ${pkg}/share/fonts/truetype/${glob} work/${name}/
-            cp ${./OFL.txt} work/${name}/OFL.txt
-            chmod -R u+w work/${name}
-          (cd work/${name} && zip -0 -q -r $out/${name}.zip .)
-        ''
-      ) archives
-    )}
+    python ${../meta/archives.py} --out $out --ofl ${../OFL.txt} --cuts ${cutsFile}
   ''

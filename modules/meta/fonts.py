@@ -133,6 +133,11 @@ class Face:
         return f"{self.family}|{self.patch}|{self.weight}|{self.italic}"
 
 
+def slug_of(name: str) -> str:
+    """A family name as the publisher and the site both key it."""
+    return name.lower().replace(" ", "-")
+
+
 def _split_camel(key: str) -> str:
     out, previous = [], ""
     for ch in key:
@@ -443,6 +448,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("roots", nargs="+", type=Path, help="`<pkg>/share` directories")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument(
+        "--archives",
+        type=Path,
+        help="the archive builder's output directory, carrying archives.json",
+    )
     args = parser.parse_args()
 
     for root in args.roots:
@@ -468,19 +478,37 @@ def main() -> int:
             read_facts(probes[0].path) if probes else ([], empty_metrics())
         )
 
-    meta: dict[str, list[dict]] = {}
+    families: FontsMeta = {}
+    archives: FontArchives = {}
     for face in faces:
         features, metrics = facts_cache[f"{face.family}|{face.patch}"]
-        meta.setdefault(face.family, []).append(to_font(face, features, metrics))
+        families.setdefault(face.family, []).append(to_font(face, features, metrics))
+
+    if args.archives:
+        records = json.loads((args.archives / "archives.json").read_text())
+        for cut, entries in records.items():
+            stem, _, tail = cut.rpartition("-")
+            patch = next((name for name in PATCH_SUFFIXES if name.lower() == tail), "")
+            if not patch:
+                stem = cut
+            family = next(
+                (name for name in FAMILY_NAMES.values() if slug_of(name) == stem), stem
+            )
+            for entry in entries:
+                archives.setdefault(family, []).append(
+                    {**entry, "patch": PATCH_SUFFIXES[patch] if patch else "base"}
+                )
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(meta, indent=2) + "\n")
+    args.out.write_text(
+        json.dumps({"families": families, "archives": archives}, indent=2) + "\n"
+    )
 
     total = sum(f.path.stat().st_size for f in faces)
     print(
-        f"[fonts-meta] {len(meta)} families, {len(faces)} faces, {total / 1048576:.1f} MB"
+        f"[fonts-meta] {len(families)} families, {len(faces)} faces, {total / 1048576:.1f} MB"
     )
-    for family, fonts in meta.items():
+    for family, fonts in families.items():
         facts = fonts[0]["metrics"]
         patches = sorted({f["patch"] for f in fonts})
         print(

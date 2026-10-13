@@ -17,13 +17,15 @@ let
     ps.numpy
   ]);
 
+  fontArchives = pkgs.callPackage ./fonts/zip.nix { inherit inputs; };
+
   metaFonts =
     pkgs.runCommand "fonts.meta.json"
       {
         nativeBuildInputs = [ pkgs.python3 ];
       }
       ''
-        python ${./meta/fonts.py} --out $out \
+        python ${./meta/fonts.py} --out $out --archives ${fontArchives} \
           ${pkgs.lib.concatStringsSep " " (map (p: "${p}/share") fontPackages)}
       '';
 
@@ -37,7 +39,6 @@ let
           ${wallpapers}/share/wallpapers/assets/contents/images
       '';
 
-  fontArchives = pkgs.callPackage ./fonts/zip.nix { inherit inputs; };
 
   publish = pkgs.writers.writePython3Bin "publish" {
     libraries = [ pkgs.python3Packages.boto3 ];
