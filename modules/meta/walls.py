@@ -2,7 +2,8 @@
 """
 One entry per wallpaper, keyed by file name, carrying the size the gallery lays
 its grid out with, the quantised palette the accent thread and the ascii plate
-are drawn from, and the accent chosen for each ground.
+are drawn from, the accent chosen for each ground, and the hue family the
+gallery's color filter groups by.
 
 It reads the *build output* rather than the bucket. The package retints every
 source image to catppuccin-mocha and catppuccin-latte and copies a curated cycle,
@@ -11,7 +12,7 @@ describes — and the manifest cannot name a file that is not being uploaded.
 
 Because the derivation is content-addressed there is no cache to keep: if the
 images change nix re-runs this, and if they do not nix serves the previous
-output. A wallpaper runs to 5MB and the answer is six colours, so the profile is
+output. A wallpaper runs to 5MB and the answer is six colors, so the profile is
 downscaled to 64×64 before the k-means rather than after.
 
     python3 walls-meta.py --out walls.meta.json <pkg>/share/wallpapers/...
@@ -20,6 +21,7 @@ downscaled to 64×64 before the k-means rather than after.
 from __future__ import annotations
 
 import argparse
+import colorsys
 import json
 import math
 import os
@@ -39,6 +41,23 @@ INK = "#11111b"
 PAPER = "#eff1f5"
 
 PROFILE = 64
+
+NEUTRAL_SATURATION = 0.12
+
+HUE_EDGES = [
+    ("red", 15),
+    ("orange", 45),
+    ("yellow", 70),
+    ("green", 165),
+    ("teal", 200),
+    ("blue", 255),
+    ("purple", 290),
+    ("pink", 345),
+]
+
+HUES = [family for family, _edge in HUE_EDGES] + ["neutral"]
+
+DARK_NEUTRAL = 0.05
 
 TAG_RULES = [
     (re.compile(r"^dominik-mayer"), "dominik-mayer"),
@@ -148,11 +167,90 @@ def accent_score(rgb) -> float:
 
     "Most saturated" is the obvious rule and it is wrong: a photograph of pink
     roses contains dark green leaves, and dark green has the higher saturation, so
-    the accent comes out olive. What actually reads as a wallpaper's colour is
+    the accent comes out olive. What actually reads as a wallpaper's color is
     chroma at mid luminance — strong enough to have presence, light enough to be
     seen. The Gaussian around 0.45 penalises both ends.
     """
     return chroma(rgb) * math.exp(-((relative_luminance(rgb) - 0.45) ** 2) / 0.06)
+
+
+def hue_family(hex_code: str) -> str:
+    """The family a color reads as, for the gallery's color filter.
+
+    Saturation first, hue second. A wallpaper whose characterful cluster is grey
+    has no hue to bucket, and forcing it into one files every monochrome shot
+    beside whatever hue its sensor noise happens to lean. Darkness counts as grey
+    for the same reason: a wall of black leaves the cluster a hue HLS can name
+    and no visitor would.
+
+    Taken from the *unclamped* cluster rather than from `accent`. The accent is
+    walked towards ink or paper until it clears contrast, and that walk moves
+    lightness, which is most of what a pale blue and a slate blue do not share.
+    The family has to describe the wallpaper, not the legibility of a thread
+    drawn from it.
+
+    Edges are hue degrees in HLS; `red` also takes the wrap past 345, which is
+    why the fallthrough below returns it.
+    """
+    hue, _lightness, saturation = colorsys.rgb_to_hls(
+        *[c / 255 for c in parse_hex(hex_code)]
+    )
+
+    if (
+        saturation < NEUTRAL_SATURATION
+        or relative_luminance(parse_hex(hex_code)) < DARK_NEUTRAL
+    ):
+        return "neutral"
+
+    degrees = hue * 360
+    for family, edge in HUE_EDGES:
+        if degrees < edge:
+            return family
+
+    return "red"
+
+
+WEIGHTS = np.array([2.0, 4.0, 3.0])
+
+
+def seed(pixels: np.ndarray, k: int) -> np.ndarray:
+    """Deterministic seeds for the k-means: evenly spaced, unless every one of them
+    lands on the same pixel.
+
+    Evenly spaced pixels are the obvious seeds and they have one failure mode: an
+    image that is mostly a single color — a starfield, a dark wall — hands all k
+    seeds the same pixel. Every centroid then starts identical, the first
+    assignment puts all N pixels in cluster 0, and the `np.array_equal(best,
+    assignment)` guard breaks the loop before a single centroid has moved. Four
+    wallpapers in this collection collapse to a one-color palette that way, which
+    is a claim the photograph does not support.
+
+    So the spaced seeds are kept unless every one of them is the same pixel — the
+    actual collapse. Partial overlap is not a failure: an image with large flat
+    regions legitimately hands two seeds the same color, and Lloyd's takes it
+    from there. Only the total collapse needs rescuing, and rescuing only it keeps
+    every palette this collection has already published byte for byte identical,
+    accent included. Deterministic either way, because the derivation is
+    content-addressed and a seeded RNG would make the manifest depend on the
+    machine that built it.
+    """
+    if len(pixels) <= k:
+        indices = [(i * len(pixels)) // k for i in range(k)]
+        return pixels[indices].astype(float)
+
+    spaced = pixels[[(i * len(pixels)) // k for i in range(k)]].astype(float)
+    if len({tuple(pixel) for pixel in spaced}) > 1:
+        return spaced
+
+    chosen = [pixels[0]]
+    for _ in range(k - 1):
+        taken = np.array(chosen)
+        distances = ((pixels[:, None, :] - taken[None, :, :]) ** 2 * WEIGHTS).sum(
+            axis=2
+        )
+        chosen.append(pixels[distances.min(axis=1).argmax()])
+
+    return np.array(chosen, dtype=float)
 
 
 def kmeans(pixels: np.ndarray, k: int, iterations: int = 12):
@@ -160,13 +258,11 @@ def kmeans(pixels: np.ndarray, k: int, iterations: int = 12):
     if len(pixels) == 0:
         return np.zeros((0, 3)), np.zeros(0, dtype=int)
 
-    indices = [(i * len(pixels)) // k for i in range(k)]
-    centroids = pixels[indices].astype(float)
+    centroids = seed(pixels, k)
 
     assignment = np.zeros(len(pixels), dtype=int)
     for _ in range(iterations):
-        weights = np.array([2.0, 4.0, 3.0])
-        distances = ((pixels[:, None, :] - centroids[None, :, :]) ** 2 * weights).sum(
+        distances = ((pixels[:, None, :] - centroids[None, :, :]) ** 2 * WEIGHTS).sum(
             axis=2
         )
         best = distances.argmin(axis=1)
@@ -187,7 +283,7 @@ def kmeans(pixels: np.ndarray, k: int, iterations: int = 12):
 def quantise(path: Path) -> list[str]:
     """Palette of a wallpaper, largest cluster first.
 
-    A flat image yields one colour rather than six copies of it: the palette feeds
+    A flat image yields one color rather than six copies of it: the palette feeds
     the plate gradient and the accent pick, and six identical entries are a claim
     the image does not support.
     """
@@ -202,9 +298,9 @@ def quantise(path: Path) -> list[str]:
     centroids, _ = kmeans(pixels, K)
     palette: list[str] = []
     for centroid in centroids:
-        colour = to_hex(centroid)
-        if colour not in palette:
-            palette.append(colour)
+        color = to_hex(centroid)
+        if color not in palette:
+            palette.append(color)
     return palette
 
 
@@ -248,6 +344,7 @@ def main() -> int:
             "palette": palette,
             "accent": clamp_accent(most_characterful, INK),
             "accentPaper": clamp_accent(most_characterful, PAPER),
+            "hue": hue_family(most_characterful),
             "tags": tags_for(path.name),
         }
 

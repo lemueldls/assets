@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 One archive per cut and per format, plus one per annotation set of the language
-variant, each holding that build's files and the licence. Two formats because
+variant, each holding that build's files and the license. Two formats because
 they are two jobs rather than two qualities: a truetype archive is what a desktop
 installs and what a self-hoster feeds through fonttools, a woff2 archive is what
 a webpage loads and it is a quarter of the weight.
