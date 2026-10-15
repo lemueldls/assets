@@ -37,8 +37,8 @@ ASSETS_BASE_URL = os.environ.get("ASSETS_BASE_URL", "https://assets.lemueldls.de
 
 K = 6
 
-INK = "#11111b"
-PAPER = "#eff1f5"
+DARK = "#11111b"
+LIGHT = "#eff1f5"
 
 PROFILE = 64
 
@@ -184,7 +184,7 @@ def hue_family(hex_code: str) -> str:
     and no visitor would.
 
     Taken from the *unclamped* cluster rather than from `accent`. The accent is
-    walked towards ink or paper until it clears contrast, and that walk moves
+    walked towards dark or light until it clears contrast, and that walk moves
     lightness, which is most of what a pale blue and a slate blue do not share.
     The family has to describe the wallpaper, not the legibility of a thread
     drawn from it.
@@ -342,8 +342,8 @@ def main() -> int:
             "height": height,
             "bytes": path.stat().st_size,
             "palette": palette,
-            "accent": clamp_accent(most_characterful, INK),
-            "accentPaper": clamp_accent(most_characterful, PAPER),
+            "accent": clamp_accent(most_characterful, DARK),
+            "accentLight": clamp_accent(most_characterful, LIGHT),
             "hue": hue_family(most_characterful),
             "tags": tags_for(path.name),
         }
