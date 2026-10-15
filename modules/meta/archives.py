@@ -6,9 +6,11 @@ they are two jobs rather than two qualities: a truetype archive is what a deskto
 installs and what a self-hoster feeds through fonttools, a woff2 archive is what
 a webpage loads and it is a quarter of the weight.
 
-The woff2 set is the published one where the build produces it, and a conversion
-where it does not — Code and Term are source-build only, and a row with a hole in
-it is worse than a conversion that differs by a few kilobytes.
+The woff2 set is the published one wherever the build produces it, and a
+conversion where it does not — a row with a hole in it is worse than a
+conversion that differs by a few kilobytes. Every cut builds WOFF2 today
+(`features = "full"` and `webfontFormats` in `modules/fonts/asterism`), so the
+conversion path is now a safety net rather than the route Code and Term take.
 
 Granularity stops at cut x format on purpose. One weight per archive is a thing
 nobody installs, and the per-face link on the catalogue already covers picking a

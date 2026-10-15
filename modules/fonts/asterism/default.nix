@@ -201,6 +201,7 @@ in
 
   code = asterism.override {
     variant = "Code";
+    features = "full";
     nerdfont = true;
     privateBuildPlan = common // {
       exportGlyphNames = false;
@@ -209,12 +210,15 @@ in
       noLigation = false;
       spacing = "normal";
 
+      webfontFormats = [ "WOFF2" ];
+
       ligations.inherits = "dlig";
     };
   };
 
   term = asterism.override {
     variant = "Term";
+    features = "full";
     nerdfont = true;
     privateBuildPlan = common // {
       exportGlyphNames = true;
@@ -222,6 +226,8 @@ in
       noCvSs = true;
       noLigation = false;
       spacing = "fontconfig-mono";
+
+      webfontFormats = [ "WOFF2" ];
 
       ligations.inherits = "dlig";
     };
