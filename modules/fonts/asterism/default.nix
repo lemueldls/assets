@@ -4,6 +4,16 @@ let
   common = {
     serifs = "sans";
 
+    namingOverride = {
+      copyright = "Copyright (c) 2015-2026, Renzhi Li (aka. Belleve Invis, belleve@typeof.net). Asterism modifications copyright (c) 2026, Lemuel De Los Santos. Licensed under the SIL Open Font License, Version 1.1.";
+      manufacturer = "Lemuel De Los Santos";
+      designer = "Renzhi Li (Belleve Invis); Asterism variant selections by Lemuel De Los Santos";
+      description = "Asterism by Lemuel De Los Santos. Derived from Iosevka by Renzhi Li (Belleve Invis).";
+      urlVendor = "https://lem.my/fonts";
+      urlDesigner = "https://typeof.net/Iosevka/";
+      vendorIdTag = "LMLD";
+    };
+
     variants = {
       design = {
         ascii-single-quote = "straight";
