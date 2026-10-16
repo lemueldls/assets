@@ -24,7 +24,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Set up SSH signing key
         run: |
@@ -54,10 +54,11 @@ jobs:
           nix build --print-out-paths .#public
 
       - name: Add and commit changes
+        continue-on-error: true
         run: |
           git add -A
           git commit -S -m "chore: update flake [skip ci]" || echo "No changes to commit"
-          git push
+          git push || (git pull --rebase && git push)
 
       - name: Assemble the upload tree
         run: |
